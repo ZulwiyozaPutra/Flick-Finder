@@ -119,6 +119,36 @@ class ViewController: UIViewController {
         
         // TODO: Make request to Flickr!
         
+        let session = URLSession.shared
+        let request = URLRequest(url: flickrURLFromParameters(methodParameters))
+        
+        let task = session.dataTask(with: request) { (data, response, error) in
+            
+            // if an error occurs, print it and re-enable the UI
+            func displayError(error: String) {
+                print(error)
+                performUIUpdatesOnMain {
+                    self.setUIEnabled(true)
+                    self.photoTitleLabel.text = "No photo returned. Try again"
+                    self.photoImageView.image = nil
+                }
+            }
+            
+            guard (error == nil) else {
+                displayError("There was an error with your request: \(error)")
+                return
+            }
+            
+            if error == nil {
+                print(data!)
+            } else {
+                print(error!.localizedDescription)
+                displayError(error: error! as! String)
+            }
+            
+        }
+        task.resume()
+        
     }
     
     // MARK: Helper for Creating a URL from Parameters
