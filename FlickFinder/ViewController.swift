@@ -173,12 +173,25 @@ class ViewController: UIViewController {
                 return
             }
             
-            for photo in photos {
-                
+            let totalPhotos = photos.count
+            
+            let randomNumber = self.generateRandomNumber(upperBound: totalPhotos)
+            let photoDictionaryToDisplay = photos[randomNumber]
+            
+            print(photoDictionaryToDisplay)
+            
+            guard let imageURLString = photoDictionaryToDisplay[Constants.FlickrResponseKeys.MediumURL] as? String else {
+                displayError(error: "Cannot find any photo url for index num")
+                return
             }
             
+            let imageURL = URL(string: imageURLString)
             
-            print(parsedResult)
+            if let imageData = try? Data(contentsOf: imageURL!) {
+                performUIUpdatesOnMain {
+                    self.photoImageView.image = UIImage(data: imageData)
+                }
+            }
         }
         task.resume()
         
