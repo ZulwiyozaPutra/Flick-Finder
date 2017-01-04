@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import GameKit
 
 // MARK: - ViewController: UIViewController
 
@@ -146,13 +147,13 @@ class ViewController: UIViewController {
                 return
             }
             
+            // Was there any data returned?
             guard let data = data else {
                 displayError(error: "No data was returned by the request")
                 return
             }
             
-            print(error!.localizedDescription)
-            
+            // Parse the data
             let parsedResult: [String: AnyObject]
             do {
                 parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: AnyObject]
@@ -161,10 +162,31 @@ class ViewController: UIViewController {
                 return
             }
             
+            // Did flickr return an error in data
+            guard let status = parsedResult[Constants.FlickrResponseKeys.Status] as? String, status == Constants.FlickrResponseValues.OKStatus else {
+                displayError(error: "Flickr API returned an error. See error code and message in \(parsedResult)")
+                return
+            }
             
+            guard let photosDictionary = parsedResult[Constants.FlickrResponseKeys.Photos] as? [String: AnyObject], let photos = photosDictionary[Constants.FlickrResponseKeys.Photo] as? [[String: AnyObject]] else {
+                displayError(error: "Could not find a key of '\(Constants.FlickrResponseKeys.Photos)' in \(parsedResult)")
+                return
+            }
+            
+            for photo in photos {
+                
+            }
+            
+            
+            print(parsedResult)
         }
         task.resume()
         
+    }
+    
+    private func generateRandomNumber(upperBound: Int) -> Int {
+        let randomNumber = GKRandomSource.sharedRandom().nextInt(upperBound: upperBound)
+        return randomNumber
     }
     
     // MARK: Helper for Creating a URL from Parameters
