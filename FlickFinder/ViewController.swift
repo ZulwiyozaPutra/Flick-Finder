@@ -175,26 +175,32 @@ class ViewController: UIViewController {
             
             let totalPhotos = photos.count
             
-            let randomNumber = self.generateRandomNumber(upperBound: totalPhotos)
-            let photoDictionaryToDisplay = photos[randomNumber]
-            
-            print(photoDictionaryToDisplay)
-            
-            guard let imageURLString = photoDictionaryToDisplay[Constants.FlickrResponseKeys.MediumURL] as? String else {
-                displayError(error: "Cannot find any photo url for index num")
+            if totalPhotos == 0 {
+                displayError(error: "No photos found search again")
                 return
-            }
-            
-            let imageURL = URL(string: imageURLString)
-            
-            if let imageData = try? Data(contentsOf: imageURL!) {
-                performUIUpdatesOnMain {
-                    self.photoImageView.image = UIImage(data: imageData)
+            } else {
+                let randomNumber = self.generateRandomNumber(upperBound: totalPhotos)
+                let photoDictionaryToDisplay = photos[randomNumber]
+                let photoTitle = photoDictionaryToDisplay[Constants.FlickrResponseKeys.Title] as? String
+                print(photoDictionaryToDisplay)
+                
+                guard let imageURLString = photoDictionaryToDisplay[Constants.FlickrResponseKeys.MediumURL] as? String else {
+                    displayError(error: "Cannot find any photo url for index num")
+                    return
+                }
+                
+                let imageURL = URL(string: imageURLString)
+                
+                if let imageData = try? Data(contentsOf: imageURL!) {
+                    performUIUpdatesOnMain {
+                        self.setUIEnabled(true)
+                        self.photoImageView.image = UIImage(data: imageData)
+                        self.photoTitleLabel.text = photoTitle ?? "Unititled"
+                    }
                 }
             }
         }
         task.resume()
-        
     }
     
     private func generateRandomNumber(upperBound: Int) -> Int {
