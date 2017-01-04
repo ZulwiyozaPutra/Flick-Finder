@@ -134,17 +134,33 @@ class ViewController: UIViewController {
                 }
             }
             
+            // Was there any error?
             guard (error == nil) else {
-                displayError("There was an error with your request: \(error)")
+                displayError(error: "There was an error with your request: \(error)")
                 return
             }
             
-            if error == nil {
-                print(data!)
-            } else {
-                print(error!.localizedDescription)
-                displayError(error: error! as! String)
+            // Did we get expected status code
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                displayError(error: "Your status code response is not 200 - ish")
+                return
             }
+            
+            guard let data = data else {
+                displayError(error: "No data was returned by the request")
+                return
+            }
+            
+            print(error!.localizedDescription)
+            
+            let parsedResult: [String: AnyObject]
+            do {
+                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: AnyObject]
+            } catch {
+                displayError(error: "Could not parse the data as JSON: '\(data)'")
+                return
+            }
+            
             
         }
         task.resume()
