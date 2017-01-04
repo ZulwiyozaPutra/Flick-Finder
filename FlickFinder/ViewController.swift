@@ -24,7 +24,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var phraseSearchButton: UIButton!
     @IBOutlet weak var latitudeTextField: UITextField!
     @IBOutlet weak var longitudeTextField: UITextField!
-    @IBOutlet weak var latLonSearchButton: UIButton!
+    @IBOutlet weak var latLongSearchButton: UIButton!
     
     // MARK: Life Cycle
     
@@ -216,15 +216,15 @@ private extension ViewController {
         latitudeTextField.isEnabled = enabled
         longitudeTextField.isEnabled = enabled
         phraseSearchButton.isEnabled = enabled
-        latLonSearchButton.isEnabled = enabled
+        latLongSearchButton.isEnabled = enabled
         
         // adjust search button alphas
         if enabled {
             phraseSearchButton.alpha = 1.0
-            latLonSearchButton.alpha = 1.0
+            latLongSearchButton.alpha = 1.0
         } else {
             phraseSearchButton.alpha = 0.5
-            latLonSearchButton.alpha = 0.5
+            latLongSearchButton.alpha = 0.5
         }
     }
 }
